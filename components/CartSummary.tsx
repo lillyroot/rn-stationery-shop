@@ -1,20 +1,32 @@
 import { StyleSheet, Text, View } from 'react-native';
-import { selectCartCount, selectCartTotal, useCartStore } from '../stores/cartStore';
+import {
+  selectCartCount,
+  selectCartPositions,
+  selectPrescriptionCount,
+  useCartStore,
+} from '../stores/cartStore';
 
 export default function CartSummary() {
-  const total = useCartStore(selectCartTotal);
+  const positions = useCartStore(selectCartPositions);
   const count = useCartStore(selectCartCount);
+  const prescriptionCount = useCartStore(selectPrescriptionCount);
 
   return (
     <View style={styles.wrap}>
       <View style={styles.row}>
-        <Text style={styles.label}>Товаров</Text>
-        <Text style={styles.value}>{count}</Text>
+        <Text style={styles.label}>Препаратов</Text>
+        <Text style={styles.value}>{positions}</Text>
       </View>
       <View style={styles.row}>
-        <Text style={styles.totalLabel}>Итого</Text>
-        <Text style={styles.totalValue}>{total} ₽</Text>
+        <Text style={styles.totalLabel}>Всего упаковок</Text>
+        <Text style={styles.totalValue}>{count}</Text>
       </View>
+      {prescriptionCount > 0 && (
+        <Text style={styles.warning}>
+          Для {prescriptionCount} поз. нужен рецепт врача — возьмите его с
+          собой при получении.
+        </Text>
+      )}
     </View>
   );
 }
@@ -30,5 +42,13 @@ const styles = StyleSheet.create({
   label: { fontSize: 14, color: '#666' },
   value: { fontSize: 14, fontWeight: '600' },
   totalLabel: { fontSize: 16, fontWeight: '700' },
-  totalValue: { fontSize: 18, fontWeight: '800', color: '#1e88e5' },
+  totalValue: { fontSize: 18, fontWeight: '800', color: '#00897b' },
+  warning: {
+    marginTop: 6,
+    padding: 10,
+    borderRadius: 8,
+    backgroundColor: '#fdecea',
+    color: '#c62828',
+    fontSize: 13,
+  },
 });

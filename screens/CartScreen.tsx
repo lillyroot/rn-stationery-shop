@@ -2,7 +2,12 @@ import { Alert, FlatList, Pressable, StyleSheet, Text, View } from 'react-native
 import { useNavigation } from '@react-navigation/native';
 import type { NativeStackNavigationProp } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../types/navigation';
-import { selectCartLines, useCartLines, useCartStore } from '../stores/cartStore';
+import {
+  selectCartCount,
+  selectPrescriptionCount,
+  useCartLines,
+  useCartStore,
+} from '../stores/cartStore';
 import CartItem from '../components/CartItem';
 import CartSummary from '../components/CartSummary';
 import EmptyState from '../components/EmptyState';
@@ -18,20 +23,23 @@ export default function CartScreen() {
     return (
       <EmptyState
         title="Корзина пуста"
-        subtitle="Добавьте товары из каталога"
+        subtitle="Добавьте препараты из каталога"
       />
     );
   }
 
-  const handleBuy = () => {
+  const handleOrder = () => {
     // Читаем актуальное состояние из стора вне React — фишка Zustand
-    const total = useCartStore.getState().lines;
-    const count = Object.values(total).reduce((s, l) => s + l.quantity, 0);
+    const state = useCartStore.getState();
+    const count = selectCartCount(state);
+    const prescriptionCount = selectPrescriptionCount(state);
 
     Alert.alert(
-      'Спасибо за покупку! 🎉',
-      `Вы заказали ${count} тов. на сумму ${Object.values(total)
-        .reduce((s, l) => s + l.product.price * l.quantity, 0)} ₽.`,
+      'Заказ оформлен! 🎉',
+      `Вы заказали ${count} уп. препаратов.` +
+        (prescriptionCount > 0
+          ? `\nНе забудьте рецепт: он нужен для ${prescriptionCount} поз.`
+          : ''),
       [
         {
           text: 'OK',
@@ -57,14 +65,14 @@ export default function CartScreen() {
     <View style={styles.container}>
       <FlatList
         data={lines}
-        keyExtractor={(l) => l.product.id}
+        keyExtractor={(l) => l.drug.id}
         renderItem={({ item }) => <CartItem line={item} />}
         contentContainerStyle={styles.list}
       />
       <View style={styles.footer}>
         <CartSummary />
-        <Pressable style={styles.buyBtn} onPress={handleBuy}>
-          <Text style={styles.buyBtnText}>Купить</Text>
+        <Pressable style={styles.buyBtn} onPress={handleOrder}>
+          <Text style={styles.buyBtnText}>Оформить заказ</Text>
         </Pressable>
       </View>
     </View>

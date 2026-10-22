@@ -1,6 +1,6 @@
 // Типы для навигации
 export type RootStackParamList = {
-  ProductList: undefined;
-  ProductDetails: { productId: string };
+  DrugList: undefined;
+  DrugDetails: { drugId: string };
   Cart: undefined;
 };
