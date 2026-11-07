@@ -5,8 +5,19 @@ import DrugListScreen from '../screens/DrugListScreen';
 import DrugDetailsScreen from '../screens/DrugDetailsScreen';
 import CartScreen from '../screens/CartScreen';
 import HeaderCartButton from '../components/HeaderCartButton';
+import SignOutButton from '../components/SignOutButton';
+import { StyleSheet, View } from 'react-native';
 
 const Stack = createNativeStackNavigator<RootStackParamList>();
+
+function AccountActions() {
+  return (
+    <View style={styles.actions}>
+      <HeaderCartButton />
+      <SignOutButton />
+    </View>
+  );
+}
 
 export default function RootNavigator() {
   return (
@@ -17,7 +28,7 @@ export default function RootNavigator() {
           component={DrugListScreen}
           options={{
             title: 'Аптека',
-            headerRight: () => <HeaderCartButton />,
+            headerRight: () => <AccountActions />,
           }}
         />
         <Stack.Screen
@@ -25,15 +36,19 @@ export default function RootNavigator() {
           component={DrugDetailsScreen}
           options={{
             title: 'Препарат',
-            headerRight: () => <HeaderCartButton />,
+            headerRight: () => <AccountActions />,
           }}
         />
         <Stack.Screen
           name="Cart"
           component={CartScreen}
-          options={{ title: 'Корзина' }}
+          options={{ title: 'Корзина', headerRight: () => <SignOutButton /> }}
         />
       </Stack.Navigator>
     </NavigationContainer>
   );
 }
+
+const styles = StyleSheet.create({
+  actions: { flexDirection: 'row', alignItems: 'center', gap: 8 },
+});
